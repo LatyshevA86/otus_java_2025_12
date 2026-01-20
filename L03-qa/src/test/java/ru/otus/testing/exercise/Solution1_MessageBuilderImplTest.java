@@ -10,7 +10,7 @@ class Solution1_MessageBuilderImplTest {
     @BeforeEach
     void setUp() {
         System.out.println("setUp");
-        throw new RuntimeException("Ooops in setUp");
+        //        throw new RuntimeException("Ooops in setUp");
     }
 
     @AfterEach
@@ -21,6 +21,6 @@ class Solution1_MessageBuilderImplTest {
     @Test
     void buildMessageTest() {
         System.out.println("buildMessageTest");
-        //throw new RuntimeException("Ooops in buildMessageTest");
+        // throw new RuntimeException("Ooops in buildMessageTest");
     }
 }
