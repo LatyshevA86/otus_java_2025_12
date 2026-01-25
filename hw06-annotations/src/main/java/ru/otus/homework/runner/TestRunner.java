@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.homework.annotations.After;
@@ -28,19 +29,18 @@ public final class TestRunner {
 
     public static final String LONG_LINE = "-----------------------------------------";
 
-    private TestRunner() {}
+    private TestRunner() {
+    }
 
     /**
      * Запускает тесты в указанном классе.
      *
-     * @param className полное имя класса с тестами
+     * @param clazz класс с тестами
      * @return статистика выполнения тестов
      */
-    public static TestStatistics runTests(String className) {
-        logger.info("Запуск тестов для класса: {}", className);
-
-        Class<?> testClass = loadClass(className);
-        TestClassContext context = analyzeTestClass(testClass);
+    public static TestStatistics runTests(Class<?> clazz) {
+        logger.info("Запуск тестов для класса: {}", clazz);
+        TestClassContext context = analyzeTestClass(clazz);
 
         List<TestResult> results = executeAllTests(context);
         TestStatistics statistics = calculateStatistics(results);
@@ -48,17 +48,6 @@ public final class TestRunner {
         printResults(results, statistics);
 
         return statistics;
-    }
-
-    /**
-     * Загружает класс по имени.
-     */
-    private static Class<?> loadClass(String className) {
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Класс не найден: " + className, e);
-        }
     }
 
     /**
@@ -77,8 +66,8 @@ public final class TestRunner {
      */
     private static List<Method> findMethodsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
         return Arrays.stream(clazz.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(annotationClass))
-                .toList();
+            .filter(method -> method.isAnnotationPresent(annotationClass))
+            .toList();
     }
 
     /**
@@ -144,9 +133,9 @@ public final class TestRunner {
                 executeMethod(testInstance, beforeMethod);
             } catch (Exception e) {
                 logger.error(
-                        "Ошибка в @Before методе {}: {}",
-                        beforeMethod.getName(),
-                        getRootCause(e).getMessage());
+                    "Ошибка в @Before методе {}: {}",
+                    beforeMethod.getName(),
+                    getRootCause(e).getMessage());
                 return false;
             }
         }
@@ -154,7 +143,7 @@ public final class TestRunner {
     }
 
     private static void executeMethod(Object testInstance, Method method)
-            throws InvocationTargetException, IllegalAccessException {
+        throws InvocationTargetException, IllegalAccessException {
         method.setAccessible(true);
         method.invoke(testInstance);
     }
@@ -182,9 +171,9 @@ public final class TestRunner {
                 executeMethod(testInstance, afterMethod);
             } catch (Exception e) {
                 logger.error(
-                        "Ошибка в @After методе {}: {}",
-                        afterMethod.getName(),
-                        getRootCause(e).getMessage());
+                    "Ошибка в @After методе {}: {}",
+                    afterMethod.getName(),
+                    getRootCause(e).getMessage());
             }
         }
     }
@@ -221,7 +210,7 @@ public final class TestRunner {
                 logger.info("✓ {} - PASSED", result.testName());
             } else {
                 String errorMessage =
-                        result.exception() != null ? result.exception().getMessage() : "Unknown error";
+                    result.exception() != null ? result.exception().getMessage() : "Unknown error";
                 logger.info("✗ {} - FAILED: {}", result.testName(), errorMessage);
             }
         }
