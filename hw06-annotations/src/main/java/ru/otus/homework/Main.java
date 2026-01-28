@@ -9,7 +9,8 @@ import ru.otus.homework.runner.TestRunner;
 public class Main {
 
     public static void main(String[] args) {
-        TestStatistics statistics = TestRunner.runTests(ExampleTest.class);
+        TestRunner testRunner = new TestRunner();
+        TestStatistics statistics = testRunner.runTests(ExampleTest.class);
 
         if (statistics.failedTests() > 0) {
             System.exit(1);

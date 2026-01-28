@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.homework.annotations.After;
@@ -25,12 +24,9 @@ import ru.otus.homework.model.TestStatistics;
 @SuppressWarnings({"java:S3011", "java:S2629"})
 public final class TestRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
+    private final Logger logger = LoggerFactory.getLogger(TestRunner.class);
 
     public static final String LONG_LINE = "-----------------------------------------";
-
-    private TestRunner() {
-    }
 
     /**
      * Запускает тесты в указанном классе.
@@ -38,7 +34,7 @@ public final class TestRunner {
      * @param clazz класс с тестами
      * @return статистика выполнения тестов
      */
-    public static TestStatistics runTests(Class<?> clazz) {
+    public TestStatistics runTests(Class<?> clazz) {
         logger.info("Запуск тестов для класса: {}", clazz);
         TestClassContext context = analyzeTestClass(clazz);
 
@@ -53,7 +49,7 @@ public final class TestRunner {
     /**
      * Анализирует тестовый класс и собирает информацию о методах.
      */
-    private static TestClassContext analyzeTestClass(Class<?> testClass) {
+    private TestClassContext analyzeTestClass(Class<?> testClass) {
         List<Method> beforeMethods = findMethodsWithAnnotation(testClass, Before.class);
         List<Method> testMethods = findMethodsWithAnnotation(testClass, Test.class);
         List<Method> afterMethods = findMethodsWithAnnotation(testClass, After.class);
@@ -64,16 +60,16 @@ public final class TestRunner {
     /**
      * Находит все методы с указанной аннотацией.
      */
-    private static List<Method> findMethodsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+    private List<Method> findMethodsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
         return Arrays.stream(clazz.getDeclaredMethods())
-            .filter(method -> method.isAnnotationPresent(annotationClass))
-            .toList();
+                .filter(method -> method.isAnnotationPresent(annotationClass))
+                .toList();
     }
 
     /**
      * Выполняет все тесты.
      */
-    private static List<TestResult> executeAllTests(TestClassContext context) {
+    private List<TestResult> executeAllTests(TestClassContext context) {
         List<TestResult> results = new ArrayList<>();
 
         for (Method testMethod : context.testMethods()) {
@@ -87,7 +83,7 @@ public final class TestRunner {
     /**
      * Выполняет один тест с созданием нового экземпляра класса.
      */
-    private static TestResult executeSingleTest(TestClassContext context, Method testMethod) {
+    private TestResult executeSingleTest(TestClassContext context, Method testMethod) {
         String testName = testMethod.getName();
         logger.info("Выполнение теста: {}", testName);
 
@@ -114,7 +110,7 @@ public final class TestRunner {
     /**
      * Создает новый экземпляр тестового класса.
      */
-    private static Object createTestInstance(Class<?> testClass) {
+    private Object createTestInstance(Class<?> testClass) {
         try {
             Constructor<?> constructor = testClass.getDeclaredConstructor();
             constructor.setAccessible(true);
@@ -127,23 +123,23 @@ public final class TestRunner {
     /**
      * Выполняет все методы @Before.
      */
-    private static boolean executeBeforeMethods(List<Method> beforeMethods, Object testInstance) {
+    private boolean executeBeforeMethods(List<Method> beforeMethods, Object testInstance) {
         for (Method beforeMethod : beforeMethods) {
             try {
                 executeMethod(testInstance, beforeMethod);
             } catch (Exception e) {
                 logger.error(
-                    "Ошибка в @Before методе {}: {}",
-                    beforeMethod.getName(),
-                    getRootCause(e).getMessage());
+                        "Ошибка в @Before методе {}: {}",
+                        beforeMethod.getName(),
+                        getRootCause(e).getMessage());
                 return false;
             }
         }
         return true;
     }
 
-    private static void executeMethod(Object testInstance, Method method)
-        throws InvocationTargetException, IllegalAccessException {
+    private void executeMethod(Object testInstance, Method method)
+            throws InvocationTargetException, IllegalAccessException {
         method.setAccessible(true);
         method.invoke(testInstance);
     }
@@ -151,7 +147,7 @@ public final class TestRunner {
     /**
      * Выполняет тестовый метод.
      */
-    private static Throwable executeTestMethod(Method testMethod, Object testInstance) {
+    private Throwable executeTestMethod(Method testMethod, Object testInstance) {
         try {
             executeMethod(testInstance, testMethod);
             return null;
@@ -165,15 +161,15 @@ public final class TestRunner {
     /**
      * Выполняет все методы @After.
      */
-    private static void executeAfterMethods(List<Method> afterMethods, Object testInstance) {
+    private void executeAfterMethods(List<Method> afterMethods, Object testInstance) {
         for (Method afterMethod : afterMethods) {
             try {
                 executeMethod(testInstance, afterMethod);
             } catch (Exception e) {
                 logger.error(
-                    "Ошибка в @After методе {}: {}",
-                    afterMethod.getName(),
-                    getRootCause(e).getMessage());
+                        "Ошибка в @After методе {}: {}",
+                        afterMethod.getName(),
+                        getRootCause(e).getMessage());
             }
         }
     }
@@ -181,7 +177,7 @@ public final class TestRunner {
     /**
      * Получает корневую причину исключения.
      */
-    private static Throwable getRootCause(Throwable throwable) {
+    private Throwable getRootCause(Throwable throwable) {
         Throwable cause = throwable.getCause();
         return cause != null ? cause : throwable;
     }
@@ -189,7 +185,7 @@ public final class TestRunner {
     /**
      * Вычисляет статистику на основе результатов тестов.
      */
-    private static TestStatistics calculateStatistics(List<TestResult> results) {
+    private TestStatistics calculateStatistics(List<TestResult> results) {
         int total = results.size();
         int passed = (int) results.stream().filter(TestResult::passed).count();
         int failed = total - passed;
@@ -200,7 +196,7 @@ public final class TestRunner {
     /**
      * Выводит результаты тестирования.
      */
-    private static void printResults(List<TestResult> results, TestStatistics statistics) {
+    private void printResults(List<TestResult> results, TestStatistics statistics) {
         logger.info(LONG_LINE);
         logger.info("Результаты тестирования:");
         logger.info(LONG_LINE);
@@ -210,7 +206,7 @@ public final class TestRunner {
                 logger.info("✓ {} - PASSED", result.testName());
             } else {
                 String errorMessage =
-                    result.exception() != null ? result.exception().getMessage() : "Unknown error";
+                        result.exception() != null ? result.exception().getMessage() : "Unknown error";
                 logger.info("✗ {} - FAILED: {}", result.testName(), errorMessage);
             }
         }
