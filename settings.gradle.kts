@@ -10,6 +10,8 @@ include("hw04-generics")
 include("L05-collections")
 include("L06-annotations")
 include("hw06-annotations")
+include("L08-gc")
+include("L09-docker")
 include("L10-byteCodes")
 include("hw10-byteCodes")
 

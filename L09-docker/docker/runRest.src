@@ -1,0 +1,36 @@
+docker run hello-world
+docker stats
+------
+docker run --rm --name rest-service \
+--network="host" \
+spvdocker/otus-demo
+
+--------------------------
+docker run --rm --name rest-service \
+--memory=512m \
+--cpus 2 \
+--network="host" \
+-e JAVA_TOOL_OPTIONS="-Xms350m -Xmx350m -XX:+UseSerialGC" \
+spvdocker/otus-demo
+
+--------------------------
+
+java -Xms350m -Xmx350m -jar  L09-docker.jar
+
+--------------------------
+
+docker run --rm --name rest-service \
+--memory=300m \
+--cpus 2 \
+--network="host" \
+-e JAVA_TOOL_OPTIONS="-Xms350m -Xmx350m -XX:+UseSerialGC" \
+spvdocker/otus-demo
+
+--------------------------
+docker run --rm --name rest-service \
+--memory=256m \
+--cpus 2 \
+--network="host" \
+-e JAVA_TOOL_OPTIONS="-XX:InitialRAMPercentage=80.0 -XX:MaxRAMPercentage=80.0 -XX:+UseSerialGC" \
+spvdocker/otus-demo
+
