@@ -4,7 +4,6 @@ package ru.otus.atm;
  * Номиналы банкнот, поддерживаемые банкоматом.
  */
 public enum Denomination {
-
     FIVE_THOUSAND(5000),
     TWO_THOUSAND(2000),
     ONE_THOUSAND(1000),
