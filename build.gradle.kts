@@ -65,7 +65,7 @@ subprojects {
 
         dependsOn("spotlessApply")
     }
-    apply<name.remal.gradle_plugins.sonarlint.SonarLintPlugin>()
+//    apply<name.remal.gradle_plugins.sonarlint.SonarLintPlugin>()
     apply<com.diffplug.gradle.spotless.SpotlessPlugin>()
     configure<com.diffplug.gradle.spotless.SpotlessExtension> {
         java {

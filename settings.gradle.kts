@@ -22,6 +22,8 @@ include("L13-creationalPatterns")
 include("L14-behavioralPatterns")
 include("L15-structuralPatterns:demo")
 include("L15-structuralPatterns:homework")
+include("L16-io")
+include("L16-io:homework")
 
 pluginManagement {
     val jgitver: String by settings
