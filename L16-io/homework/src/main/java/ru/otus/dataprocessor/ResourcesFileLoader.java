@@ -19,11 +19,11 @@ public class ResourcesFileLoader implements Loader {
         ObjectMapper mapper = new ObjectMapper();
         try (var inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
             if (inputStream == null) {
-                throw new RuntimeException("Resource not found: " + fileName);
+                throw new FileProcessException("Resource not found: " + fileName);
             }
             return mapper.readValue(inputStream, new TypeReference<>() {});
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileProcessException(e);
         }
     }
 }

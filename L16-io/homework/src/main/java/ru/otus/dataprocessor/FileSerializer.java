@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class FileSerializer implements Serializer {
 
-    public final String fileName;
+    private final String fileName;
 
     public FileSerializer(String fileName) {
         this.fileName = fileName;
@@ -19,7 +19,7 @@ public class FileSerializer implements Serializer {
         try {
             mapper.writeValue(new File(fileName), data);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileProcessException(e);
         }
     }
 }
