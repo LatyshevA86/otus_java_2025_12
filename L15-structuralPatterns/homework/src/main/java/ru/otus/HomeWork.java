@@ -36,10 +36,8 @@ public class HomeWork {
         var listenerPrinter = new ListenerPrinterConsole();
         complexProcessor.addListener(listenerPrinter);
 
-        var message = new Message.Builder(1L)
-            .field11("field11")
-            .field12("field12")
-            .build();
+        var message =
+                new Message.Builder(1L).field11("field11").field12("field12").build();
 
         var result = complexProcessor.handle(message);
         logger.info("result:{}", result);
