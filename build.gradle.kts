@@ -71,6 +71,10 @@ subprojects {
 
         dependsOn("spotlessApply")
     }
+
+    tasks.withType<JavaExec> {
+        jvmArgs("-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
+    }
 //    apply<name.remal.gradle_plugins.sonarlint.SonarLintPlugin>()
     apply<com.diffplug.gradle.spotless.SpotlessPlugin>()
     configure<com.diffplug.gradle.spotless.SpotlessExtension> {
