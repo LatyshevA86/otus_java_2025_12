@@ -23,8 +23,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
     private final EntityClassMetaData<T> entityClassMetaData;
 
     public DataTemplateJdbc(
-            DbExecutor dbExecutor, EntitySQLMetaData entitySQLMetaData, EntityClassMetaData<T> entityClassMetaData
-    ) {
+            DbExecutor dbExecutor, EntitySQLMetaData entitySQLMetaData, EntityClassMetaData<T> entityClassMetaData) {
         this.dbExecutor = dbExecutor;
         this.entitySQLMetaData = entitySQLMetaData;
         this.entityClassMetaData = entityClassMetaData;
@@ -104,8 +103,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
     }
 
     private T getEntity(ResultSet resultSet, List<Field> fieldsWithoutId, Field idField, Constructor<T> constructor)
-        throws IllegalAccessException, InstantiationException, InvocationTargetException, SQLException
-    {
+            throws IllegalAccessException, InstantiationException, InvocationTargetException, SQLException {
         var args = new Object[fieldsWithoutId.size() + 1];
         args[0] = resultSet.getObject(idField.getName());
         for (var idx = 0; idx < fieldsWithoutId.size(); idx++) {
