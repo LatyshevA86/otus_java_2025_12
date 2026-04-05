@@ -14,20 +14,20 @@ import ru.otus.crm.datasource.DriverManagerDataSource;
 import ru.otus.crm.model.Client;
 import ru.otus.crm.service.DbServiceCachedClientImpl;
 import ru.otus.crm.service.DbServiceClientImpl;
-import ru.otus.mapper.DataTemplateJdbc;
-import ru.otus.mapper.EntityClassMetaData;
-import ru.otus.mapper.EntityClassMetaDataImpl;
-import ru.otus.mapper.EntitySQLMetaData;
-import ru.otus.mapper.EntitySQLMetaDataImpl;
+import ru.otus.jdbc.mapper.DataTemplateJdbc;
+import ru.otus.jdbc.mapper.EntityClassMetaData;
+import ru.otus.jdbc.mapper.EntityClassMetaDataImpl;
+import ru.otus.jdbc.mapper.EntitySQLMetaData;
+import ru.otus.jdbc.mapper.EntitySQLMetaDataImpl;
 
 @SuppressWarnings({"java:S125", "java:S1481"})
-public class HomeWorkJdbs {
+public class HomeWorkCache {
 
     private static final String URL = "jdbc:postgresql://localhost:5430/demoDB";
     private static final String USER = "usr";
     private static final String PASSWORD = "pwd";
 
-    private static final Logger log = LoggerFactory.getLogger(HomeWorkJdbs.class);
+    private static final Logger log = LoggerFactory.getLogger(HomeWorkCache.class);
 
     public static void main(String[] args) {
         long start = System.nanoTime();
