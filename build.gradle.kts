@@ -25,6 +25,10 @@ allprojects {
     val glassfishJson: String by project
     val errorProneAnnotations: String by project
     val j2objcAnnotations: String by project
+    val redisson: String by project
+
+    val jetty: String by project
+    val freemarker: String by project
 
     apply(plugin = "io.spring.dependency-management")
     dependencyManagement {
@@ -41,6 +45,16 @@ allprojects {
             dependency("org.glassfish:jakarta.json:$glassfishJson")
             dependency("com.google.errorprone:error_prone_annotations:$errorProneAnnotations")
             dependency("com.google.j2objc:j2objc-annotations:$j2objcAnnotations")
+            dependency("org.redisson:redisson:$redisson")
+
+            dependency("org.eclipse.jetty.ee10:jetty-ee10-servlet:$jetty")
+            dependency("org.eclipse.jetty:jetty-server:$jetty")
+            dependency("org.eclipse.jetty.ee10:jetty-ee10-webapp:$jetty")
+            dependency("org.eclipse.jetty:jetty-security:$jetty")
+            dependency("org.eclipse.jetty:jetty-http:$jetty")
+            dependency("org.eclipse.jetty:jetty-io:$jetty")
+            dependency("org.eclipse.jetty:jetty-util:$jetty")
+            dependency("org.freemarker:freemarker:$freemarker")
         }
     }
 
