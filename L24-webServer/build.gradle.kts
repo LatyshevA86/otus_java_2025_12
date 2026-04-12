@@ -10,6 +10,8 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-io")
     implementation("org.eclipse.jetty:jetty-util")
     implementation("org.freemarker:freemarker")
+    implementation("org.hibernate.orm:hibernate-core")
+    implementation(project(":L21-jpql:homework"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
