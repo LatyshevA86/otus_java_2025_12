@@ -10,16 +10,15 @@
                     const tbody = document.getElementById('clientsTableBody');
                     tbody.innerHTML = '';
                     clients.forEach(client => {
-                    const address = client.address ? client.address.street : '';
-                    const phones = client.phones ? client.phones.map(p => p.number).join(', ') : '';
-                    const row = '<tr>' +
-                        '<td>' + client.name + '</td>' +
-                        '<td>' + address + '</td>' +
-                        '<td>' + phones + '</td>' +
-                        '</tr>';
-                    tbody.insertAdjacentHTML('beforeend', row);
-                });
-
+                        const address = client.address ? client.address.street : '';
+                        const phones = client.phones ? client.phones.map(p => p.number).join(', ') : '';
+                        const row = '<tr>' +
+                            '<td>' + client.name + '</td>' +
+                            '<td>' + address + '</td>' +
+                            '<td>' + phones + '</td>' +
+                            '</tr>';
+                        tbody.insertAdjacentHTML('beforeend', row);
+                    });
                 });
         }
 

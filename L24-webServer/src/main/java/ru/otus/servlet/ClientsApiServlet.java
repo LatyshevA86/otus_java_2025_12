@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import ru.otus.crm.model.Address;
 import ru.otus.crm.model.Client;
 import ru.otus.crm.model.Phone;
@@ -27,17 +29,17 @@ public class ClientsApiServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<ClientDto> clients = dbServiceClient.findAll().stream()
-                .map(client -> new ClientDto(
-                        client.getName(),
-                        client.getAddress() != null
-                                ? new ClientDto.AddressDto(client.getAddress().getStreet())
-                                : null,
-                        client.getPhones() != null
-                                ? client.getPhones().stream()
-                                        .map(phone -> new ClientDto.PhoneDto(phone.getNumber()))
-                                        .toList()
-                                : List.of()))
-                .toList();
+            .map(client -> new ClientDto(
+                client.getName(),
+                client.getAddress() != null
+                    ? new ClientDto.AddressDto(client.getAddress().getStreet())
+                    : null,
+                client.getPhones() != null
+                    ? client.getPhones().stream()
+                    .map(phone -> new ClientDto.PhoneDto(phone.getNumber()))
+                    .toList()
+                    : List.of()))
+            .toList();
         response.setContentType("application/json;charset=UTF-8");
         response.getOutputStream().print(gson.toJson(clients));
     }
@@ -47,7 +49,7 @@ public class ClientsApiServlet extends HttpServlet {
         var dto = gson.fromJson(request.getReader(), ClientDto.class);
 
         Address address =
-                dto.address() != null ? new Address(null, dto.address().street()) : null;
+            dto.address() != null ? new Address(null, dto.address().street()) : null;
 
         List<Phone> phones = new ArrayList<>();
         if (dto.phones() != null) {
