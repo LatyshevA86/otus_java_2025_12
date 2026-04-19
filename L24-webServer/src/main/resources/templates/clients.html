@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Клиенты</title>
+    <script>
+        function getClients() {
+            fetch('api/clients')
+                .then(response => response.json())
+                .then(clients => {
+                    const tbody = document.getElementById('clientsTableBody');
+                    tbody.innerHTML = '';
+                    clients.forEach(client => {
+                        const address = client.address ? client.address.street : '';
+                        const phones = client.phones ? client.phones.map(p => p.number).join(', ') : '';
+                        const row = '<tr>' +
+                            '<td>' + client.name + '</td>' +
+                            '<td>' + address + '</td>' +
+                            '<td>' + phones + '</td>' +
+                            '</tr>';
+                        tbody.insertAdjacentHTML('beforeend', row);
+                    });
+                });
+        }
+
+        function createClient() {
+            const name = document.getElementById('clientNameInput').value.trim();
+            if (!name) return;
+
+            const addressStr = document.getElementById('clientAddressInput').value.trim();
+            const phonesStr = document.getElementById('clientPhonesInput').value.trim();
+
+            const clientData = { name: name };
+
+            if (addressStr) {
+                clientData.address = { street: addressStr };
+            }
+
+            if (phonesStr) {
+                clientData.phones = phonesStr.split(',')
+                    .map(p => p.trim())
+                    .filter(p => p.length > 0)
+                    .map(p => ({ number: p }));
+            }
+
+            fetch('api/clients', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(clientData)
+            })
+            .then(() => {
+                document.getElementById('clientNameInput').value = '';
+                document.getElementById('clientAddressInput').value = '';
+                document.getElementById('clientPhonesInput').value = '';
+                getClients();
+            });
+        }
+    </script>
+</head>
+<body>
+
+<h4>Список клиентов</h4>
+<button onclick="getClients()">Получить клиентов</button>
+<table style="width: 600px; margin-top: 10px" border="1">
+    <thead>
+    <tr>
+        <th style="width: 200px">Имя</th>
+        <th style="width: 200px">Адрес</th>
+        <th style="width: 150px">Телефоны</th>
+    </tr>
+    </thead>
+    <tbody id="clientsTableBody"></tbody>
+</table>
+
+<h4>Создать клиента</h4>
+<input type="text" id="clientNameInput" placeholder="Введите имя клиента">
+<input type="text" id="clientAddressInput" placeholder="Введите адрес клиента">
+<input type="text" id="clientPhonesInput" placeholder="Телефоны через запятую">
+<button onclick="createClient()">Создать</button>
+<p id="createResult"></p>
+
+</body>
+</html>
