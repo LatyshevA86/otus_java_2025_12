@@ -1,5 +1,7 @@
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
+import name.remal.gradle_plugins.sonarlint.SonarLintExtension
 import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 
 plugins {
     id("fr.brouillard.oss.gradle.jgitver")
@@ -30,6 +32,8 @@ allprojects {
     val jetty: String by project
     val freemarker: String by project
 
+    val reflections: String by project
+
     apply(plugin = "io.spring.dependency-management")
     dependencyManagement {
         dependencies {
@@ -55,6 +59,8 @@ allprojects {
             dependency("org.eclipse.jetty:jetty-io:$jetty")
             dependency("org.eclipse.jetty:jetty-util:$jetty")
             dependency("org.freemarker:freemarker:$freemarker")
+
+            dependency("org.reflections:reflections:$reflections")
         }
     }
 
@@ -89,6 +95,7 @@ subprojects {
     tasks.withType<JavaExec> {
         jvmArgs("-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
     }
+
 //    apply<name.remal.gradle_plugins.sonarlint.SonarLintPlugin>()
     apply<com.diffplug.gradle.spotless.SpotlessPlugin>()
     configure<com.diffplug.gradle.spotless.SpotlessExtension> {

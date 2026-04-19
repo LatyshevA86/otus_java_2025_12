@@ -36,7 +36,7 @@ public class WebServerHomeWork {
         new MigrationsExecutorFlyway(dbUrl, dbUserName, dbPassword).executeMigrations();
 
         var sessionFactory =
-            HibernateUtils.buildSessionFactory(configuration, Client.class, Address.class, Phone.class);
+                HibernateUtils.buildSessionFactory(configuration, Client.class, Address.class, Phone.class);
 
         var transactionManager = new TransactionManagerHibernate(sessionFactory);
 
@@ -51,7 +51,7 @@ public class WebServerHomeWork {
         UserAuthService authService = new UserAuthServiceImpl(userDao);
 
         UsersWebServer usersWebServer = new AdminWebServerWithFilterBasedSecurity(
-            WEB_SERVER_PORT, authService, dbServiceClient, gson, templateProcessor);
+                WEB_SERVER_PORT, authService, dbServiceClient, gson, templateProcessor);
 
         usersWebServer.start();
         usersWebServer.join();

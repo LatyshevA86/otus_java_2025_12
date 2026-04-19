@@ -23,8 +23,7 @@ public class AdminWebServerSimple implements UsersWebServer {
     private final Server server;
 
     public AdminWebServerSimple(
-        int port, DBServiceClient dbServiceClient, Gson gson, TemplateProcessor templateProcessor
-    ) {
+            int port, DBServiceClient dbServiceClient, Gson gson, TemplateProcessor templateProcessor) {
         this.dbServiceClient = dbServiceClient;
         this.gson = gson;
         this.templateProcessor = templateProcessor;
@@ -71,16 +70,16 @@ public class AdminWebServerSimple implements UsersWebServer {
         resourceHandler.setDirAllowed(false);
         resourceHandler.setWelcomeFiles(START_PAGE_NAME);
         resourceHandler.setBaseResourceAsString(
-            FileSystemHelper.localFileNameOrResourceNameToFullPath(COMMON_RESOURCES_DIR));
+                FileSystemHelper.localFileNameOrResourceNameToFullPath(COMMON_RESOURCES_DIR));
         return resourceHandler;
     }
 
     private ServletContextHandler createServletContextHandler() {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.addServlet(
-            new ServletHolder(new ClientsServlet(templateProcessor, dbServiceClient)), "/clients");
+                new ServletHolder(new ClientsServlet(templateProcessor, dbServiceClient)), "/clients");
         servletContextHandler.addServlet(
-            new ServletHolder(new ClientsApiServlet(dbServiceClient, gson)), "/api/clients/*");
+                new ServletHolder(new ClientsApiServlet(dbServiceClient, gson)), "/api/clients/*");
         return servletContextHandler;
     }
 }

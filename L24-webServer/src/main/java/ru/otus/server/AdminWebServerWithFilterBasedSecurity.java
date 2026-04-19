@@ -21,8 +21,7 @@ public class AdminWebServerWithFilterBasedSecurity extends AdminWebServerSimple 
             UserAuthService authService,
             DBServiceClient dbServiceClient,
             Gson gson,
-            TemplateProcessor templateProcessor
-    ) {
+            TemplateProcessor templateProcessor) {
         super(port, dbServiceClient, gson, templateProcessor);
         this.authService = authService;
     }
