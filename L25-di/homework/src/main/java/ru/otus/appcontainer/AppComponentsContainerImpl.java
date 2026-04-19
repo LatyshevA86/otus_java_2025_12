@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 import ru.otus.appcontainer.api.AppComponent;
 import ru.otus.appcontainer.api.AppComponentsContainer;
 import ru.otus.appcontainer.api.AppComponentsContainerConfig;
@@ -24,26 +23,18 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     public AppComponentsContainerImpl(Class<?>... initialConfigClasses) {
-        processConfig(initialConfigClasses);
+        Arrays.stream(initialConfigClasses)
+            .sorted(comparingInt(configClass -> configClass.getAnnotation(AppComponentsContainerConfig.class).order()))
+            .forEach(this::processConfig);
     }
 
-    private void processConfig(Class<?>... configClasses) {
-        Arrays.stream(configClasses)
-            .sorted(comparingInt(config ->
-                config.getAnnotation(AppComponentsContainerConfig.class).order()))
-            .flatMap(configClass -> {
-                checkConfigClass(configClass);
-                Object configInstance;
-                configInstance = tryToCreateConfigInstance(configClass);
-                return getAnnotatedMethodsEntryStream(configClass, configInstance);
-            })
-            .sorted(comparingInt(methodEntry ->
-                methodEntry.getKey().getAnnotation(AppComponent.class).order()))
-            .forEach(entry -> {
-                Method method = entry.getKey();
-                Object configInstance = entry.getValue();
-                String componentName =
-                    method.getAnnotation(AppComponent.class).name();
+    private void processConfig(Class<?> configClass) {
+        checkConfigClass(configClass);
+        Object configInstance = tryToCreateConfigInstance(configClass);
+        Arrays.stream(configClass.getDeclaredMethods())
+            .sorted(comparingInt(method -> method.getAnnotation(AppComponent.class).order()))
+            .forEach(method -> {
+                String componentName = method.getAnnotation(AppComponent.class).name();
                 checkDuplicates(componentName);
                 try {
                     Object[] args = getConstructorParameters(method);
@@ -54,14 +45,6 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                     throw new RuntimeException(String.format("Failed to create component: %s", componentName), e);
                 }
             });
-    }
-
-    private Stream<Map.Entry<Method, Object>> getAnnotatedMethodsEntryStream(
-        Class<?> configClass, Object configInstance
-    ) {
-        return Arrays.stream(configClass.getDeclaredMethods())
-            .filter(method -> method.isAnnotationPresent(AppComponent.class))
-            .map(method -> Map.entry(method, configInstance));
     }
 
     private Object[] getConstructorParameters(Method method) {
