@@ -7,7 +7,6 @@ import java.io.PrintStream;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Scanner;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +19,6 @@ import ru.otus.services.*;
 
 class AppTest {
 
-    @Disabled("Эту аннотацию надо убрать")
     @DisplayName("Из контекста тремя способами должен корректно доставаться компонент с проставленными полями")
     @ParameterizedTest(name = "Достаем по: {0}")
     @CsvSource(
@@ -73,7 +71,6 @@ class AppTest {
         }
     }
 
-    @Disabled("Эту аннотацию надо убрать")
     @DisplayName("В контексте не должно быть компонентов с одинаковым именем")
     @Test
     void shouldNotAllowTwoComponentsWithSameName() {
@@ -81,7 +78,6 @@ class AppTest {
                 .isInstanceOf(Exception.class);
     }
 
-    @Disabled("Эту аннотацию надо убрать")
     @DisplayName(
             "При попытке достать из контекста отсутствующий или дублирующийся компонент, должно выкидываться исключение")
     @Test
@@ -120,6 +116,51 @@ class AppTest {
         @AppComponent(order = 1, name = "equationPreparer2")
         public EquationPreparer equationPreparer2() {
             return new EquationPreparerImpl();
+        }
+    }
+
+    @Test
+    @DisplayName("Контекст должен корректно инициализироваться из двух конфиг-классов")
+    void shouldCorrectlyInitializeContextFromTwoConfigClasses() {
+        var ctx = new AppComponentsContainerImpl(SplitConfig1.class, SplitConfig2.class);
+
+        assertThat(ctx.getAppComponent(IOService.class)).isNotNull();
+        assertThat(ctx.getAppComponent(EquationPreparer.class)).isNotNull();
+        assertThat(ctx.getAppComponent(PlayerService.class)).isNotNull();
+        assertThat(ctx.getAppComponent(GameProcessor.class)).isNotNull();
+
+        assertThat(ctx.getAppComponent(IOService.class)).isInstanceOf(IOServiceStreams.class);
+        assertThat(ctx.getAppComponent(EquationPreparer.class)).isInstanceOf(EquationPreparerImpl.class);
+        assertThat(ctx.getAppComponent(PlayerService.class)).isInstanceOf(PlayerServiceImpl.class);
+        assertThat(ctx.getAppComponent(GameProcessor.class)).isInstanceOf(GameProcessorImpl.class);
+    }
+
+    @AppComponentsContainerConfig(order = 1)
+    public static class SplitConfig1 {
+
+        @AppComponent(order = 0, name = "ioService")
+        public IOService ioService() {
+            return new IOServiceStreams(System.out, System.in);
+        }
+
+        @AppComponent(order = 1, name = "equationPreparer")
+        public EquationPreparer equationPreparer() {
+            return new EquationPreparerImpl();
+        }
+    }
+
+    @AppComponentsContainerConfig(order = 2)
+    public static class SplitConfig2 {
+
+        @AppComponent(order = 0, name = "playerService")
+        public PlayerService playerService(IOService ioService) {
+            return new PlayerServiceImpl(ioService);
+        }
+
+        @AppComponent(order = 1, name = "gameProcessor")
+        public GameProcessor gameProcessor(
+                IOService ioService, PlayerService playerService, EquationPreparer equationPreparer) {
+            return new GameProcessorImpl(ioService, equationPreparer, playerService);
         }
     }
 }
