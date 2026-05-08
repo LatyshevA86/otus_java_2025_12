@@ -32,6 +32,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         checkConfigClass(configClass);
         Object configInstance = tryToCreateConfigInstance(configClass);
         Arrays.stream(configClass.getDeclaredMethods())
+            .filter(method -> method.isAnnotationPresent(AppComponent.class))
             .sorted(comparingInt(method -> method.getAnnotation(AppComponent.class).order()))
             .forEach(method -> {
                 String componentName = method.getAnnotation(AppComponent.class).name();
