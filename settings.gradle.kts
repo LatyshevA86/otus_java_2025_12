@@ -39,6 +39,16 @@ include("L23-redis:data-listener")
 include("L24-webServer")
 include("L25-di:class-demo")
 include("L25-di:homework")
+include("L26-springBootMvc")
+include("L27-websocket:websocket")
+include("L27-websocket:messager")
+include("L27-websocket:messager-starter")
+include("L27-websocket:application")
+
+include("L28-springDataJdbc")
+
+include ("L29-threads")
+include ("L30-JMM")
 
 pluginManagement {
     val jgitver: String by settings

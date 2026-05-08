@@ -24,34 +24,38 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     public AppComponentsContainerImpl(Class<?>... initialConfigClasses) {
         Arrays.stream(initialConfigClasses)
-            .sorted(comparingInt(configClass -> configClass.getAnnotation(AppComponentsContainerConfig.class).order()))
-            .forEach(this::processConfig);
+                .sorted(comparingInt(configClass -> configClass
+                        .getAnnotation(AppComponentsContainerConfig.class)
+                        .order()))
+                .forEach(this::processConfig);
     }
 
     private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
         Object configInstance = tryToCreateConfigInstance(configClass);
         Arrays.stream(configClass.getDeclaredMethods())
-            .filter(method -> method.isAnnotationPresent(AppComponent.class))
-            .sorted(comparingInt(method -> method.getAnnotation(AppComponent.class).order()))
-            .forEach(method -> {
-                String componentName = method.getAnnotation(AppComponent.class).name();
-                checkDuplicates(componentName);
-                try {
-                    Object[] args = getConstructorParameters(method);
-                    Object componentInstance = method.invoke(configInstance, args);
-                    appComponents.add(componentInstance);
-                    appComponentsByName.put(componentName, componentInstance);
-                } catch (Exception e) {
-                    throw new RuntimeException(String.format("Failed to create component: %s", componentName), e);
-                }
-            });
+                .filter(method -> method.isAnnotationPresent(AppComponent.class))
+                .sorted(comparingInt(
+                        method -> method.getAnnotation(AppComponent.class).order()))
+                .forEach(method -> {
+                    String componentName =
+                            method.getAnnotation(AppComponent.class).name();
+                    checkDuplicates(componentName);
+                    try {
+                        Object[] args = getConstructorParameters(method);
+                        Object componentInstance = method.invoke(configInstance, args);
+                        appComponents.add(componentInstance);
+                        appComponentsByName.put(componentName, componentInstance);
+                    } catch (Exception e) {
+                        throw new RuntimeException(String.format("Failed to create component: %s", componentName), e);
+                    }
+                });
     }
 
     private Object[] getConstructorParameters(Method method) {
         return Arrays.stream(method.getParameterTypes())
-            .map(this::getAppComponent)
-            .toArray();
+                .map(this::getAppComponent)
+                .toArray();
     }
 
     private void checkDuplicates(String componentName) {
@@ -77,9 +81,9 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     @Override
     public <C> C getAppComponent(Class<C> componentClass) {
         List<C> components = appComponents.stream()
-            .filter(componentClass::isInstance)
-            .map(componentClass::cast)
-            .toList();
+                .filter(componentClass::isInstance)
+                .map(componentClass::cast)
+                .toList();
         if (components.isEmpty()) {
             throw new RuntimeException(String.format("Component not found: %s", componentClass));
         }
