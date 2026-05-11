@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5430/clients_db
+    username: usr
+    password: pwd
+  flyway:
+    enabled: true
