@@ -2,6 +2,7 @@ package ru.otus.protobuf;
 
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings({"squid:S106", "squid:S2142"})
 public class GRPCClient {
@@ -11,10 +12,11 @@ public class GRPCClient {
     private static final long FIRST_VALUE = 0L;
     private static final long LAST_VALUE = 30L;
     private static long currentValue = FIRST_VALUE;
-    private static long lastValueFromServer;
-    private static boolean isNewValue = false;
+    private static AtomicLong lastValueFromServer;
 
     public static void main(String[] args) throws InterruptedException {
+        lastValueFromServer = new AtomicLong(0);
+
         var channel = ManagedChannelBuilder.forAddress(SERVER_HOST, SERVER_PORT)
                 .usePlaintext()
                 .build();
@@ -28,9 +30,8 @@ public class GRPCClient {
         stub.generate(numberMessage, new StreamObserver<>() {
             @Override
             public void onNext(NumberMessage value) {
-                lastValueFromServer = value.getNewValue();
-                System.out.println("new value: " + lastValueFromServer);
-                isNewValue = true;
+                lastValueFromServer.set(value.getNewValue());
+                System.out.println("new value: " + value.getNewValue());
             }
 
             @Override
@@ -46,11 +47,7 @@ public class GRPCClient {
 
         for (int i = 0; i < 50; i++) {
             Thread.sleep(1000);
-            currentValue = currentValue + 1;
-            if (isNewValue) {
-                currentValue += lastValueFromServer;
-                isNewValue = false;
-            }
+            currentValue = currentValue + 1 + lastValueFromServer.getAndSet(0);
             System.out.println("current value: " + currentValue);
         }
 
