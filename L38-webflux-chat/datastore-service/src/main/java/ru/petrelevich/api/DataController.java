@@ -1,5 +1,6 @@
 package ru.petrelevich.api;
 
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -44,10 +45,17 @@ public class DataController {
 
     @GetMapping(value = "/msg/{roomId}", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Flux<MessageDto> getMessagesByRoomId(@PathVariable("roomId") String roomId) {
-        return Mono.just(roomId)
-                .doOnNext(room -> log.info("getMessagesByRoomId, room:{}", room))
-                .flatMapMany(dataStore::loadMessages)
-                .map(message -> new MessageDto(message.msgText()))
+        Flux<Message> messages;
+        if (Objects.equals(roomId, "1408")) {
+            log.info("getMessagesByRoomId, all rooms");
+            messages = dataStore.loadMessages();
+        } else {
+            messages = Mono.just(roomId)
+                    .doOnNext(room -> log.info("getMessagesByRoomId, room:{}", room))
+                    .flatMapMany(dataStore::loadMessages);
+        }
+
+        return messages.map(message -> new MessageDto(message.msgText()))
                 .doOnNext(msgDto -> log.info("msgDto:{}", msgDto))
                 .subscribeOn(workerPool);
     }

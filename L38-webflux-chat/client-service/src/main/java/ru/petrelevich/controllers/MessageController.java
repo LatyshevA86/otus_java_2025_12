@@ -36,6 +36,11 @@ public class MessageController {
         logger.info("get message:{}, roomId:{}", message, roomId);
         saveMessage(roomId, message).subscribe(msgId -> logger.info("message send id:{}", msgId));
 
+        convertAndSend(roomId, message);
+        convertAndSend("1408", message);
+    }
+
+    private void convertAndSend(String roomId, Message message) {
         template.convertAndSend(
                 String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.messageStr())));
     }
