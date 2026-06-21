@@ -3,7 +3,17 @@ let stompClient = null;
 const chatLineElementId = "chatLine";
 const roomIdElementId = "roomId";
 const messageElementId = "message";
+const messagePanelElementId = "messagePanel";
+const READ_ONLY_ROOM = "1408";
 
+const isReadOnlyRoom = (roomId) => String(roomId) === READ_ONLY_ROOM;
+
+const updateSendControls = (connected) => {
+    const roomId = document.getElementById(roomIdElementId).value;
+    const readOnly = connected && isReadOnlyRoom(roomId);
+    const messagePanel = document.getElementById(messagePanelElementId);
+    messagePanel.hidden = readOnly;
+};
 
 const setConnected = (connected) => {
     const connectBtn = document.getElementById("connect");
@@ -13,6 +23,7 @@ const setConnected = (connected) => {
     disconnectBtn.disabled = !connected;
     const chatLine = document.getElementById(chatLineElementId);
     chatLine.hidden = !connected;
+    updateSendControls(connected);
 }
 
 const connect = () => {
@@ -39,8 +50,12 @@ const disconnect = () => {
 
 const sendMsg = () => {
     const roomId = document.getElementById(roomIdElementId).value;
+    if (isReadOnlyRoom(roomId)) {
+        return;
+    }
     const message = document.getElementById(messageElementId).value;
     stompClient.send(`/app/message.${roomId}`, {}, JSON.stringify({'messageStr': message}))
+    document.getElementById(messageElementId).value = '';
 }
 
 const showMessage = (message) => {

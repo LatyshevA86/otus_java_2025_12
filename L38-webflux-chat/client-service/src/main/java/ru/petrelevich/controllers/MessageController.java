@@ -1,5 +1,6 @@
 package ru.petrelevich.controllers;
 
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -22,6 +23,7 @@ public class MessageController {
     private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
     private static final String TOPIC_TEMPLATE = "/topic/response.";
+    private static final String READ_ONLY_ROOM = "1408";
 
     private final WebClient datastoreClient;
     private final SimpMessagingTemplate template;
@@ -36,6 +38,11 @@ public class MessageController {
         logger.info("get message:{}, roomId:{}", message, roomId);
         saveMessage(roomId, message).subscribe(msgId -> logger.info("message send id:{}", msgId));
 
+        convertAndSend(roomId, message);
+        convertAndSend(READ_ONLY_ROOM, message);
+    }
+
+    private void convertAndSend(String roomId, Message message) {
         template.convertAndSend(
                 String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.messageStr())));
     }
@@ -84,9 +91,10 @@ public class MessageController {
     }
 
     private Flux<Message> getMessagesByRoomId(long roomId) {
+        String uri = Objects.equals(Long.valueOf(READ_ONLY_ROOM), roomId) ? "/msg" : String.format("/msg/%s", roomId);
         return datastoreClient
                 .get()
-                .uri(String.format("/msg/%s", roomId))
+                .uri(uri)
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchangeToFlux(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {
