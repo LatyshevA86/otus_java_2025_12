@@ -55,6 +55,7 @@ const sendMsg = () => {
     }
     const message = document.getElementById(messageElementId).value;
     stompClient.send(`/app/message.${roomId}`, {}, JSON.stringify({'messageStr': message}))
+    document.getElementById(messageElementId).value = '';
 }
 
 const showMessage = (message) => {
